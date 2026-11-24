@@ -1,0 +1,1473 @@
+<!DOCTYPE html> 
+
+<html lang="ja"> 
+
+<head> 
+
+  <meta charset="UTF-8" /> 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
+
+  <title>飲み会サバイバル - 終電までの死闘</title> 
+
+  <style> 
+
+    * { 
+
+      box-sizing: border-box; 
+
+      user-select: none; 
+
+      -webkit-user-select: none; 
+
+      touch-action: manipulation; 
+
+    } 
+
+    body { 
+
+      margin: 0; 
+
+      padding: 0; 
+
+      background: #1a1625; 
+
+      color: #fff; 
+
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; 
+
+      display: flex; 
+
+      justify-content: center; 
+
+      align-items: center; 
+
+      min-height: 100vh; 
+
+      overflow: hidden; 
+
+    } 
+
+    #app { 
+
+      width: 100%; 
+
+      max-width: 400px; 
+
+      height: 100vh; 
+
+      max-height: 780px; 
+
+      background: linear-gradient(180deg, #2b1e38 0%, #1c1426 100%); 
+
+      border: 2px solid #4a3560; 
+
+      border-radius: 16px; 
+
+      display: flex; 
+
+      flex-direction: column; 
+
+      justify-content: space-between; 
+
+      padding: 14px; 
+
+      position: relative; 
+
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); 
+
+      overflow: hidden; 
+
+    } 
+
+ 
+
+    /* 酔い演出（画面揺れ・ぼやけ） */ 
+
+    .drunk-wobble { 
+
+      animation: wobble 0.6s infinite ease-in-out; 
+
+    } 
+
+    @keyframes wobble { 
+
+      0%, 100% { transform: rotate(0deg); } 
+
+      25% { transform: rotate(1.2deg); } 
+
+      75% { transform: rotate(-1.2deg); } 
+
+    } 
+
+    .shake { 
+
+      animation: shake 0.35s; 
+
+    } 
+
+    @keyframes shake { 
+
+      0%, 100% { transform: translateX(0); } 
+
+      20% { transform: translateX(-10px); } 
+
+      40% { transform: translateX(10px); } 
+
+      60% { transform: translateX(-6px); } 
+
+      80% { transform: translateX(6px); } 
+
+    } 
+
+ 
+
+    /* ヘッダー＆タイマー */ 
+
+    .header { 
+
+      display: flex; 
+
+      justify-content: space-between; 
+
+      align-items: center; 
+
+      font-size: 14px; 
+
+      background: rgba(0, 0, 0, 0.35); 
+
+      padding: 8px 12px; 
+
+      border-radius: 10px; 
+
+    } 
+
+    .timer { 
+
+      font-size: 20px; 
+
+      font-weight: bold; 
+
+      color: #ffd166; 
+
+    } 
+
+ 
+
+    /* ゲージエリア */ 
+
+    .gauges { 
+
+      display: flex; 
+
+      flex-direction: column; 
+
+      gap: 10px; 
+
+      margin-top: 6px; 
+
+    } 
+
+    .gauge-box { 
+
+      background: rgba(255, 255, 255, 0.08); 
+
+      padding: 8px 10px; 
+
+      border-radius: 10px; 
+
+    } 
+
+    .gauge-label { 
+
+      display: flex; 
+
+      justify-content: space-between; 
+
+      font-size: 13px; 
+
+      font-weight: bold; 
+
+      margin-bottom: 4px; 
+
+    } 
+
+    .bar-bg { 
+
+      width: 100%; 
+
+      height: 16px; 
+
+      background: #111; 
+
+      border-radius: 8px; 
+
+      overflow: hidden; 
+
+      border: 1px solid #444; 
+
+    } 
+
+    .bar-fill { 
+
+      height: 100%; 
+
+      width: 50%; 
+
+      transition: width 0.12s linear, background-color 0.2s; 
+
+    } 
+
+    #mood-bar { background: #06d6a0; } 
+
+    #drunk-bar { background: #ff9f1c; } 
+
+ 
+
+    /* 上司＆テーブル中央エリア */ 
+
+    .stage { 
+
+      flex: 1; 
+
+      display: flex; 
+
+      flex-direction: column; 
+
+      align-items: center; 
+
+      justify-content: center; 
+
+      position: relative; 
+
+      margin: 8px 0; 
+
+    } 
+
+    .boss-area { 
+
+      text-align: center; 
+
+      margin-bottom: 8px; 
+
+    } 
+
+    .boss-face { 
+
+      font-size: 56px; 
+
+      line-height: 1.1; 
+
+      transition: transform 0.15s; 
+
+    } 
+
+    .boss-speech { 
+
+      background: #fff; 
+
+      color: #222; 
+
+      font-size: 13px; 
+
+      font-weight: bold; 
+
+      padding: 6px 14px; 
+
+      border-radius: 20px; 
+
+      margin-top: 4px; 
+
+      position: relative; 
+
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+
+      min-height: 32px; 
+
+      display: flex; 
+
+      align-items: center; 
+
+      justify-content: center; 
+
+    } 
+
+ 
+
+    /* アイテムカード */ 
+
+    .item-card { 
+
+      width: 240px; 
+
+      background: rgba(255, 255, 255, 0.12); 
+
+      border: 2px solid rgba(255, 255, 255, 0.25); 
+
+      border-radius: 18px; 
+
+      padding: 16px 12px; 
+
+      text-align: center; 
+
+      margin-top: 10px; 
+
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35); 
+
+      transition: transform 0.1s; 
+
+    } 
+
+    .item-emoji { 
+
+      font-size: 64px; 
+
+      line-height: 1.1; 
+
+    } 
+
+    .item-name { 
+
+      font-size: 18px; 
+
+      font-weight: bold; 
+
+      margin: 6px 0 4px; 
+
+      color: #fff; 
+
+    } 
+
+    .item-desc { 
+
+      font-size: 12px; 
+
+      color: #ddd; 
+
+      min-height: 32px; 
+
+    } 
+
+ 
+
+    /* ポップアップメッセージ */ 
+
+    #toast { 
+
+      position: absolute; 
+
+      top: 48%; 
+
+      left: 50%; 
+
+      transform: translate(-50%, -50%); 
+
+      background: rgba(0, 0, 0, 0.85); 
+
+      color: #ffd166; 
+
+      padding: 8px 16px; 
+
+      border-radius: 20px; 
+
+      font-weight: bold; 
+
+      font-size: 15px; 
+
+      pointer-events: none; 
+
+      opacity: 0; 
+
+      transition: opacity 0.2s; 
+
+      white-space: nowrap; 
+
+      z-index: 10; 
+
+    } 
+
+ 
+
+    /* 操作ボタン */ 
+
+    .controls { 
+
+      display: grid; 
+
+      grid-template-columns: 1fr 1fr; 
+
+      gap: 12px; 
+
+      margin-bottom: 4px; 
+
+    } 
+
+    button.action-btn { 
+
+      border: none; 
+
+      border-radius: 14px; 
+
+      padding: 16px 8px; 
+
+      font-size: 16px; 
+
+      font-weight: bold; 
+
+      color: #fff; 
+
+      cursor: pointer; 
+
+      box-shadow: 0 5px 0 rgba(0,0,0,0.4); 
+
+      transition: transform 0.06s; 
+
+    } 
+
+    button.action-btn:active { 
+
+      transform: translateY(4px); 
+
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4); 
+
+    } 
+
+    #btn-drink { 
+
+      background: linear-gradient(180deg, #ff9f1c, #e07a00); 
+
+    } 
+
+    #btn-dump { 
+
+      background: linear-gradient(180deg, #3a86ff, #1d5ec4); 
+
+    } 
+
+    .sub-text { 
+
+      display: block; 
+
+      font-size: 11px; 
+
+      font-weight: normal; 
+
+      opacity: 0.9; 
+
+      margin-top: 3px; 
+
+    } 
+
+ 
+
+    /* オーバーレイ画面（タイトル / リザルト / 図鑑） */ 
+
+    .overlay { 
+
+      position: absolute; 
+
+      inset: 0; 
+
+      background: rgba(20, 14, 30, 0.96); 
+
+      display: flex; 
+
+      flex-direction: column; 
+
+      justify-content: center; 
+
+      align-items: center; 
+
+      padding: 20px; 
+
+      text-align: center; 
+
+      z-index: 20; 
+
+    } 
+
+    .hidden { display: none !important; } 
+
+    .title-logo { 
+
+      font-size: 32px; 
+
+      font-weight: 900; 
+
+      color: #ffd166; 
+
+      text-shadow: 0 3px 0 #b55d00; 
+
+      margin-bottom: 8px; 
+
+    } 
+
+    .rule-box { 
+
+      background: rgba(255,255,255,0.08); 
+
+      border-radius: 12px; 
+
+      padding: 12px; 
+
+      font-size: 13px; 
+
+      line-height: 1.6; 
+
+      text-align: left; 
+
+      margin: 12px 0; 
+
+      width: 100%; 
+
+    } 
+
+    .main-btn { 
+
+      background: #06d6a0; 
+
+      color: #111; 
+
+      border: none; 
+
+      border-radius: 12px; 
+
+      padding: 14px 28px; 
+
+      font-size: 18px; 
+
+      font-weight: bold; 
+
+      cursor: pointer; 
+
+      margin-top: 8px; 
+
+      width: 100%; 
+
+    } 
+
+    .sub-btn { 
+
+      background: rgba(255,255,255,0.15); 
+
+      color: #fff; 
+
+      border: none; 
+
+      border-radius: 10px; 
+
+      padding: 10px 18px; 
+
+      font-size: 14px; 
+
+      cursor: pointer; 
+
+      margin-top: 8px; 
+
+      width: 100%; 
+
+    } 
+
+    .zukan-list { 
+
+      width: 100%; 
+
+      max-height: 380px; 
+
+      overflow-y: auto; 
+
+      text-align: left; 
+
+      margin: 12px 0; 
+
+      display: flex; 
+
+      flex-direction: column; 
+
+      gap: 8px; 
+
+    } 
+
+    .zukan-item { 
+
+      background: rgba(255,255,255,0.08); 
+
+      padding: 10px; 
+
+      border-radius: 8px; 
+
+      font-size: 12px; 
+
+    } 
+
+    .zukan-item.locked { 
+
+      opacity: 0.45; 
+
+    } 
+
+  </style> 
+
+</head> 
+
+<body> 
+
+<div id="app"> 
+
+  <!-- ヘッダー --> 
+
+  <div class="header"> 
+
+    <div>🏆 BEST: <span id="best-score">0.0</span>秒</div> 
+
+    <div class="timer">生存: <span id="time-display">0.0</span>秒</div> 
+
+  </div> 
+
+ 
+
+  <!-- 2本のゲージ --> 
+
+  <div class="gauges"> 
+
+    <div class="gauge-box"> 
+
+      <div class="gauge-label"> 
+
+        <span>😡 上司の機嫌（0%でクビ）</span> 
+
+        <span id="mood-val">60%</span> 
+
+      </div> 
+
+      <div class="bar-bg"><div id="mood-bar" class="bar-fill"></div></div> 
+
+    </div> 
+
+    <div class="gauge-box"> 
+
+      <div class="gauge-label"> 
+
+        <span>🤢 酔い度（100%超でリバース）</span> 
+
+        <span id="drunk-val">10%</span> 
+
+      </div> 
+
+      <div class="bar-bg"><div id="drunk-bar" class="bar-fill"></div></div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- メインステージ --> 
+
+  <div class="stage"> 
+
+    <div class="boss-area"> 
+
+      <div id="boss-face" class="boss-face">😐</div> 
+
+      <div id="boss-speech" class="boss-speech">「お前、グラス空いてるぞ？」</div> 
+
+    </div> 
+
+ 
+
+    <div id="item-card" class="item-card"> 
+
+      <div id="item-emoji" class="item-emoji">🍺</div> 
+
+      <div id="item-name" class="item-name">生ビール</div> 
+
+      <div id="item-desc" class="item-desc">機嫌+16 / 酔い+15</div> 
+
+    </div> 
+
+ 
+
+    <div id="toast">ゴクゴク！</div> 
+
+  </div> 
+
+ 
+
+  <!-- 操作ボタン --> 
+
+  <div class="controls"> 
+
+    <button id="btn-drink" class="action-btn"> 
+
+      🍺 飲む！ 
+
+      <span class="sub-text" id="drink-sub">気合いで飲み干す</span> 
+
+    </button> 
+
+    <button id="btn-dump" class="action-btn"> 
+
+      🪴 捨てる 
+
+      <span class="sub-text" id="dump-sub">バレ率: 15%</span> 
+
+    </button> 
+
+  </div> 
+
+ 
+
+  <!-- タイトル画面 --> 
+
+  <div id="title-screen" class="overlay"> 
+
+    <div style="font-size: 48px;">🍻🤮👔</div> 
+
+    <div class="title-logo">飲み会サバイバル</div> 
+
+    <div style="font-size: 13px; color: #ccc;">〜終電までの限界チキンドリンク〜</div> 
+
+    <div class="rule-box"> 
+
+      <b>【ルール】</b><br> 
+
+      ① <b>上司の機嫌</b>が0%になると説教エンド！<br> 
+
+      ② <b>酔い度</b>が100%を超えるとリバース即死！<br> 
+
+      ③ ヤバい酒は<b>「🪴観葉植物に捨てる」</b>で回避しろ！<br> 
+
+      ※ただし確率で上司にバレる＆植物が枯れるぞ！ 
+
+    </div> 
+
+    <button class="main-btn" onclick="startGame()">飲み会に参加する！</button> 
+
+    <button class="sub-btn" onclick="openZukan()">📖 社畜の末路図鑑 (<span id="zukan-count">0</span>/7)</button> 
+
+  </div> 
+
+ 
+
+  <!-- リザルト画面 --> 
+
+  <div id="result-screen" class="overlay hidden"> 
+
+    <div id="result-emoji" style="font-size: 64px;">🤮</div> 
+
+    <div style="font-size: 13px; color: #ff9f1c; font-weight: bold;">GAME OVER</div> 
+
+    <div id="result-title" style="font-size: 22px; font-weight: bold; margin: 6px 0;">トイレの住人</div> 
+
+    <div id="result-desc" style="font-size: 13px; color: #ddd; margin-bottom: 12px;">限界を超えてトイレに立てこもった。</div> 
+
+    <div style="font-size: 20px; font-weight: bold; color: #ffd166; margin-bottom: 14px;"> 
+
+      生存記録: <span id="result-time">0.0</span> 秒 
+
+    </div> 
+
+    <button class="main-btn" onclick="startGame()">もう1軒行く（リトライ）</button> 
+
+    <button class="sub-btn" onclick="shareX()">𝕏 死因をポストする</button> 
+
+    <button class="sub-btn" onclick="openZukan()">📖 社畜の末路図鑑を見る</button> 
+
+  </div> 
+
+ 
+
+  <!-- 図鑑画面 --> 
+
+  <div id="zukan-screen" class="overlay hidden"> 
+
+    <div style="font-size: 22px; font-weight: bold; color: #ffd166;">📖 社畜の末路図鑑</div> 
+
+    <div id="zukan-list" class="zukan-list"></div> 
+
+    <button class="main-btn" onclick="closeZukan()">戻る</button> 
+
+  </div> 
+
+</div> 
+
+ 
+
+<script> 
+
+  // --- 簡易サウンド（Web Audio API） --- 
+
+  const AudioCtx = window.AudioContext || window.webkitAudioContext; 
+
+  let audioCtx = null; 
+
+  function playTone(freq, type = 'sine', duration = 0.12, vol = 0.15) { 
+
+    try { 
+
+      if (!audioCtx) audioCtx = new AudioCtx(); 
+
+      if (audioCtx.state === 'suspended') audioCtx.resume(); 
+
+      const osc = audioCtx.createOscillator(); 
+
+      const gain = audioCtx.createGain(); 
+
+      osc.type = type; 
+
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime); 
+
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime); 
+
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration); 
+
+      osc.connect(gain); 
+
+      gain.connect(audioCtx.destination); 
+
+      osc.start(); 
+
+      osc.stop(audioCtx.currentTime + duration); 
+
+    } catch (e) {} 
+
+  } 
+
+ 
+
+  // --- 末路（ゲームオーバー）定義 --- 
+
+  const ENDINGS = { 
+
+    puke: { id: 'puke', emoji: '🤮', title: 'No.1 トイレの住人', desc: '酔い度100%突破！個室から出られなくなり終電を逃した。' }, 
+
+    spirytus: { id: 'spirytus', emoji: '🔥', title: 'No.2 記憶の蒸発', desc: '謎のスピリタスで一発KO。翌朝、公園のベンチで発見された。' }, 
+
+    angry: { id: 'angry', emoji: '💢', title: 'No.3 無言の帰宅命令', desc: '上司の機嫌が0%に。「お前、もう帰っていいよ（真顔）」' }, 
+
+    plant: { id: 'plant', emoji: '🥀', title: 'No.4 観葉植物の呪い', desc: '同じ鉢植えに酒を捨て続け、目の前で植物が枯れてバレた！' }, 
+
+    gamble_fail: { id: 'gamble_fail', emoji: '💀', title: 'No.5 部長カクテルの犠牲者', desc: '50%の運試しに敗北。一口飲んだ瞬間に意識がブラックアウトした。' }, 
+
+    talk_fail: { id: 'talk_fail', emoji: '💤', title: 'No.6 武勇伝中の居眠り', desc: '上司の長い昔話を聞き流そうとして激怒された！' }, 
+
+    legend: { id: 'legend', emoji: '👑', title: 'No.7 伝説の社畜（60秒生存）', desc: '60秒生き延びたが、気に入られて二次会カラオケへ連行された！' } 
+
+  }; 
+
+ 
+
+  // --- ドリンク＆イベント定義 --- 
+
+  const ITEMS = [ 
+
+    { 
+
+      id: 'beer', emoji: '🍺', name: '生ビール', desc: '機嫌 +16 / 酔い +14', weight: 35, 
+
+      drink: (s) => { s.mood += 16; s.drunk += 14; showToast('グビッ！うまい！'); playTone(440, 'triangle', 0.12); }, 
+
+      dumpable: true 
+
+    }, 
+
+    { 
+
+      id: 'water', emoji: '💧', name: 'チェイサー（水）', desc: '機嫌 -6 / 酔い -24（酔い覚まし）', weight: 22, 
+
+      drink: (s) => { s.mood -= 6; s.drunk -= 24; showToast('ふぅ…水がしみる…'); playTone(660, 'sine', 0.15); }, 
+
+      dumpable: true 
+
+    }, 
+
+    { 
+
+      id: 'strong', emoji: '🥃', name: '謎のロック（度数96%）', desc: '機嫌 +35 / 酔い +48（超危険！）', weight: 16, 
+
+      drink: (s) => { 
+
+        s.mood += 35; s.drunk += 48; 
+
+        showToast('カァーーッ！！喉が焼ける！！'); 
+
+        playTone(180, 'sawtooth', 0.25); 
+
+        if (s.drunk >= 100) triggerEnd('spirytus'); 
+
+      }, 
+
+      dumpable: true 
+
+    }, 
+
+    { 
+
+      id: 'ukon', emoji: '🧪', name: '黄金のウコン', desc: '機嫌 +5 / 酔い -35（神アイテム！）', weight: 10, 
+
+      drink: (s) => { s.mood += 5; s.drunk -= 35; showToast('✨肝臓が復活した！！'); playTone(880, 'sine', 0.25); }, 
+
+      dumpable: true 
+
+    }, 
+
+    { 
+
+      id: 'cocktail', emoji: '🍸', name: '部長特製カオス酒', desc: '50%で機嫌&酔い全快 / 50%で即死', weight: 9, 
+
+      drink: (s) => { 
+
+        if (Math.random() < 0.5) { 
+
+          s.mood = 100; s.drunk = 0; 
+
+          showToast('🌈 大当たり！完全回復！！'); 
+
+          playTone(980, 'triangle', 0.3); 
+
+        } else { 
+
+          triggerEnd('gamble_fail'); 
+
+        } 
+
+      }, 
+
+      dumpable: true 
+
+    }, 
+
+    { 
+
+      id: 'talk', emoji: '🗣️', name: '上司の長い武勇伝', desc: '【特別】捨てられない！相槌を打て！', weight: 8, 
+
+      drink: (s) => { 
+
+        s.mood += 24; 
+
+        showToast('「さすが部長！勉強になります！」'); 
+
+        playTone(520, 'sine', 0.12); 
+
+      }, 
+
+      dumpable: false 
+
+    } 
+
+  ]; 
+
+ 
+
+  // --- ゲーム状態 --- 
+
+  let state = { 
+
+    running: false, 
+
+    mood: 60, 
+
+    drunk: 10, 
+
+    time: 0, 
+
+    dumpCount: 0, 
+
+    currentItem: null, 
+
+    lastFrame: 0 
+
+  }; 
+
+ 
+
+  let bestScore = parseFloat(localStorage.getItem('nomikai_best') || '0'); 
+
+  let unlocked = JSON.parse(localStorage.getItem('nomikai_zukan') || '[]'); 
+
+  let lastEnding = null; 
+
+ 
+
+  const el = { 
+
+    app: document.getElementById('app'), 
+
+    best: document.getElementById('best-score'), 
+
+    time: document.getElementById('time-display'), 
+
+    moodBar: document.getElementById('mood-bar'), 
+
+    drunkBar: document.getElementById('drunk-bar'), 
+
+    moodVal: document.getElementById('mood-val'), 
+
+    drunkVal: document.getElementById('drunk-val'), 
+
+    bossFace: document.getElementById('boss-face'), 
+
+    bossSpeech: document.getElementById('boss-speech'), 
+
+    itemEmoji: document.getElementById('item-emoji'), 
+
+    itemName: document.getElementById('item-name'), 
+
+    itemDesc: document.getElementById('item-desc'), 
+
+    btnDrink: document.getElementById('btn-drink'), 
+
+    btnDump: document.getElementById('btn-dump'), 
+
+    drinkSub: document.getElementById('drink-sub'), 
+
+    dumpSub: document.getElementById('dump-sub'), 
+
+    toast: document.getElementById('toast'), 
+
+    titleScreen: document.getElementById('title-screen'), 
+
+    resultScreen: document.getElementById('result-screen'), 
+
+    zukanScreen: document.getElementById('zukan-screen') 
+
+  }; 
+
+ 
+
+  function updateMetaUI() { 
+
+    el.best.textContent = bestScore.toFixed(1); 
+
+    document.getElementById('zukan-count').textContent = unlocked.length; 
+
+  } 
+
+  updateMetaUI(); 
+
+ 
+
+  function pickNextItem() { 
+
+    const totalWeight = ITEMS.reduce((sum, item) => sum + item.weight, 0); 
+
+    let r = Math.random() * totalWeight; 
+
+    for (const item of ITEMS) { 
+
+      if (r < item.weight) { 
+
+        state.currentItem = item; 
+
+        break; 
+
+      } 
+
+      r -= item.weight; 
+
+    } 
+
+    el.itemEmoji.textContent = state.currentItem.emoji; 
+
+    el.itemName.textContent = state.currentItem.name; 
+
+    el.itemDesc.textContent = state.currentItem.desc; 
+
+ 
+
+    if (state.currentItem.dumpable) { 
+
+      el.btnDrink.innerHTML = '🍺 飲む！<span class="sub-text">気合いで飲み干す</span>'; 
+
+      el.btnDump.disabled = false; 
+
+      el.btnDump.style.opacity = '1'; 
+
+      const catchRate = Math.min(80, 15 + state.dumpCount * 15); 
+
+      el.btnDump.innerHTML = `🪴 捨てる<span class="sub-text">バレ率: ${catchRate}%</span>`; 
+
+    } else { 
+
+      el.btnDrink.innerHTML = '👏 相槌を打つ！<span class="sub-text">機嫌アップ！</span>'; 
+
+      el.btnDump.disabled = true; 
+
+      el.btnDump.style.opacity = '0.35'; 
+
+      el.btnDump.innerHTML = '🚫 スルー不可<span class="sub-text">聞くしかない！</span>'; 
+
+    } 
+
+  } 
+
+ 
+
+  let toastTimer = null; 
+
+  function showToast(msg) { 
+
+    el.toast.textContent = msg; 
+
+    el.toast.style.opacity = '1'; 
+
+    clearTimeout(toastTimer); 
+
+    toastTimer = setTimeout(() => { el.toast.style.opacity = '0'; }, 750); 
+
+  } 
+
+ 
+
+  function screenShake() { 
+
+    el.app.classList.remove('shake'); 
+
+    void el.app.offsetWidth; 
+
+    el.app.classList.add('shake'); 
+
+  } 
+
+ 
+
+  // 飲むアクション 
+
+  el.btnDrink.addEventListener('click', () => { 
+
+    if (!state.running) return; 
+
+    state.currentItem.drink(state); 
+
+    if (!state.running) return; 
+
+    clampAndCheck(); 
+
+    if (state.running) pickNextItem(); 
+
+  }); 
+
+ 
+
+  // 捨てるアクション 
+
+  el.btnDump.addEventListener('click', () => { 
+
+    if (!state.running || !state.currentItem.dumpable) return; 
+
+ 
+
+    // 植物に捨てすぎ判定 
+
+    if (state.dumpCount >= 4 && Math.random() < 0.45) { 
+
+      triggerEnd('plant'); 
+
+      return; 
+
+    } 
+
+ 
+
+    const catchRate = Math.min(0.80, 0.15 + state.dumpCount * 0.15); 
+
+    if (Math.random() < catchRate) { 
+
+      // バレた！ 
+
+      state.mood -= 28; 
+
+      state.dumpCount = 0; 
+
+      screenShake(); 
+
+      playTone(130, 'sawtooth', 0.3); 
+
+      showToast('⚡「おい！今、鉢植えに捨てたろ！！」'); 
+
+    } else { 
+
+      // 成功！ 
+
+      state.dumpCount++; 
+
+      state.mood -= 4; 
+
+      playTone(740, 'sine', 0.08); 
+
+      showToast('🪴 サッ…（バレずに処理した！）'); 
+
+    } 
+
+    clampAndCheck(); 
+
+    if (state.running) pickNextItem(); 
+
+  }); 
+
+ 
+
+  function clampAndCheck() { 
+
+    state.mood = Math.min(100, Math.max(0, state.mood)); 
+
+    state.drunk = Math.max(0, state.drunk); 
+
+ 
+
+    if (state.drunk >= 100) { 
+
+      triggerEnd('puke'); 
+
+    } else if (state.mood <= 0) { 
+
+      triggerEnd(state.currentItem.id === 'talk' ? 'talk_fail' : 'angry'); 
+
+    } 
+
+    renderGauges(); 
+
+  } 
+
+ 
+
+  function renderGauges() { 
+
+    el.moodBar.style.width = state.mood + '%'; 
+
+    el.drunkBar.style.width = Math.min(100, state.drunk) + '%'; 
+
+    el.moodVal.textContent = Math.ceil(state.mood) + '%'; 
+
+    el.drunkVal.textContent = Math.floor(state.drunk) + '%'; 
+
+ 
+
+    // ゲージ色と上司の表情変化 
+
+    if (state.mood > 55) { 
+
+      el.moodBar.style.background = '#06d6a0'; 
+
+      el.bossFace.textContent = '😆'; 
+
+      el.bossSpeech.textContent = '「ガハハ！お前いい飲みっぷりだな！」'; 
+
+    } else if (state.mood > 25) { 
+
+      el.moodBar.style.background = '#ffd166'; 
+
+      el.bossFace.textContent = '😐'; 
+
+      el.bossSpeech.textContent = '「ん？ペース落ちてないか？」'; 
+
+    } else { 
+
+      el.moodBar.style.background = '#ef476f'; 
+
+      el.bossFace.textContent = '😡'; 
+
+      el.bossSpeech.textContent = '「おい…俺の酒が飲めないのか？」'; 
+
+    } 
+
+ 
+
+    if (state.drunk >= 75) { 
+
+      el.drunkBar.style.background = '#ef476f'; 
+
+      el.app.classList.add('drunk-wobble'); 
+
+    } else { 
+
+      el.drunkBar.style.background = '#ff9f1c'; 
+
+      el.app.classList.remove('drunk-wobble'); 
+
+    } 
+
+  } 
+
+ 
+
+  function gameLoop(now) { 
+
+    if (!state.running) return; 
+
+    const dt = (now - state.lastFrame) / 1000; 
+
+    state.lastFrame = now; 
+
+ 
+
+    state.time += dt; 
+
+    el.time.textContent = state.time.toFixed(1); 
+
+ 
+
+    // 時間経過で難易度（上司の機嫌減少スピード）が少しずつ上昇 
+
+    const moodDecay = (6.5 + state.time * 0.18) * dt; 
+
+    state.mood -= moodDecay; 
+
+ 
+
+    // 60秒生存でクリアエンド 
+
+    if (state.time >= 60.0) { 
+
+      triggerEnd('legend'); 
+
+      return; 
+
+    } 
+
+ 
+
+    clampAndCheck(); 
+
+    if (state.running) requestAnimationFrame(gameLoop); 
+
+  } 
+
+ 
+
+  function startGame() { 
+
+    state = { 
+
+      running: true, 
+
+      mood: 65, 
+
+      drunk: 10, 
+
+      time: 0, 
+
+      dumpCount: 0, 
+
+      currentItem: null, 
+
+      lastFrame: performance.now() 
+
+    }; 
+
+    el.titleScreen.classList.add('hidden'); 
+
+    el.resultScreen.classList.add('hidden'); 
+
+    el.zukanScreen.classList.add('hidden'); 
+
+    pickNextItem(); 
+
+    renderGauges(); 
+
+    requestAnimationFrame(gameLoop); 
+
+  } 
+
+ 
+
+  function triggerEnd(endingKey) { 
+
+    state.running = false; 
+
+    el.app.classList.remove('drunk-wobble'); 
+
+    const end = ENDINGS[endingKey]; 
+
+    lastEnding = end; 
+
+ 
+
+    if (state.time > bestScore) { 
+
+      bestScore = state.time; 
+
+      localStorage.setItem('nomikai_best', bestScore.toFixed(1)); 
+
+    } 
+
+    if (!unlocked.includes(end.id)) { 
+
+      unlocked.push(end.id); 
+
+      localStorage.setItem('nomikai_zukan', JSON.stringify(unlocked)); 
+
+    } 
+
+    updateMetaUI(); 
+
+ 
+
+    document.getElementById('result-emoji').textContent = end.emoji; 
+
+    document.getElementById('result-title').textContent = end.title; 
+
+    document.getElementById('result-desc').textContent = end.desc; 
+
+    document.getElementById('result-time').textContent = state.time.toFixed(1); 
+
+    el.resultScreen.classList.remove('hidden'); 
+
+  } 
+
+ 
+
+  function openZukan() { 
+
+    const list = document.getElementById('zukan-list'); 
+
+    list.innerHTML = ''; 
+
+    Object.values(ENDINGS).forEach(end => { 
+
+      const isOpen = unlocked.includes(end.id); 
+
+      const div = document.createElement('div'); 
+
+      div.className = 'zukan-item' + (isOpen ? '' : ' locked'); 
+
+      div.innerHTML = isOpen 
+
+        ? `<b>${end.emoji} ${end.title}</b><br><span style="color:#ccc;">${end.desc}</span>` 
+
+        : `<b>❓ ？？？</b><br><span>まだ体験していない末路</span>`; 
+
+      list.appendChild(div); 
+
+    }); 
+
+    el.zukanScreen.classList.remove('hidden'); 
+
+  } 
+
+ 
+
+  function closeZukan() { 
+
+    el.zukanScreen.classList.add('hidden'); 
+
+  } 
+
+ 
+
+  function shareX() { 
+
+    const text = `【飲み会サバイバル】生存記録 ${state.time.toFixed(1)}秒！\n末路：${lastEnding.title} ${lastEnding.emoji}\n#飲み会サバイバル #バカゲー`; 
+
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`; 
+
+    window.open(url, '_blank'); 
+
+  } 
+
+</script> 
+
+</body> 
+
+</html> 
