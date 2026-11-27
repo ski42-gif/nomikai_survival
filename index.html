@@ -1474,6 +1474,40 @@
 
 </script> 
 
+  <script> 
+
+  function fitGameToScreen() { 
+
+    const app = document.getElementById('app'); 
+
+    if (!app) return; 
+
+ 
+
+    const baseWidth = 390; 
+
+    const baseHeight = 760; 
+
+    const scaleX = (window.innerWidth - 12) / baseWidth; 
+
+    const scaleY = (window.innerHeight - 12) / baseHeight; 
+
+    const scale = Math.min(scaleX, scaleY, 1.25); 
+
+ 
+
+    app.style.transform = `scale(${scale})`; 
+
+  } 
+
+ 
+
+  window.addEventListener('resize', fitGameToScreen); 
+
+  window.addEventListener('DOMContentLoaded', fitGameToScreen); 
+
+</script> 
+
 </body> 
 
 </html> 
