@@ -468,7 +468,7 @@ button.action-btn:active {
 
   align-items: center; 
 
-  padding: 18px; 
+  padding: 16px 18px; 
 
   text-align: center; 
 
@@ -536,9 +536,9 @@ button.action-btn:active {
 
   border-radius: 12px; 
 
-  padding: 12px 20px; 
+  padding: 11px 18px; 
 
-  font-size: 16px; 
+  font-size: 15px; 
 
   font-weight: bold; 
 
@@ -560,9 +560,9 @@ button.action-btn:active {
 
   border-radius: 10px; 
 
-  padding: 9px 12px; 
+  padding: 8px 12px; 
 
-  font-size: 12.5px; 
+  font-size: 12px; 
 
   cursor: pointer; 
 
@@ -778,11 +778,11 @@ button.action-btn:active {
 
       <button class="sub-btn" onclick="openRules()">📜 詳細ルール</button> 
 
-      <button class="sub-btn" onclick="openZukan()">📖 末路図鑑 (<span id="zukan-count">0</span>/7)</button> 
+      <button class="sub-btn" onclick="openZukan()">📖 末路図鑑 (<span id="zukan-count">0/9</span>)</button> 
 
     </div> 
 
-    <button class="sub-btn" style="margin-top: 7px;" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0</span>/61)</button> 
+    <button class="sub-btn" style="margin-top: 7px;" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0/61</span>)</button> 
 
   </div> 
 
@@ -858,15 +858,15 @@ button.action-btn:active {
 
   <div id="result-screen" class="overlay hidden"> 
 
-    <div id="result-emoji" style="font-size: 64px;">🤢</div> 
+    <div id="result-emoji" style="font-size: 58px;">🤢</div> 
 
     <div style="font-size: 13px; color: #ff9f1c; font-weight: bold;">GAME OVER</div> 
 
-    <div id="result-title" style="font-size: 22px; font-weight: bold; margin: 6px 0;">トイレの住人</div> 
+    <div id="result-title" style="font-size: 21px; font-weight: bold; margin: 4px 0;">トイレの住人</div> 
 
-    <div id="result-desc" style="font-size: 13px; color: #ddd; margin-bottom: 10px;">限界を超えてトイレに立てこもった。</div> 
+    <div id="result-desc" style="font-size: 12.5px; color: #ddd; margin-bottom: 8px;">限界を超えてトイレに立てこもった。</div> 
 
-    <div style="font-size: 20px; font-weight: bold; color: #ffd166; margin-bottom: 10px;"> 
+    <div style="font-size: 19px; font-weight: bold; color: #ffd166; margin-bottom: 8px;"> 
 
       生存記録: <span id="result-time">0.0</span> 秒 
 
@@ -874,7 +874,13 @@ button.action-btn:active {
 
     <button class="main-btn" onclick="startGame()">もう1軒行く (リトライ)</button> 
 
-    <button class="sub-btn" style="margin-top: 7px;" onclick="shareX()">𝕏 死因をポストする</button> 
+    <div class="btn-row"> 
+
+      <button class="sub-btn" onclick="shareX()">𝕏 死因をポスト</button> 
+
+      <button class="sub-btn" onclick="goHome()">🏠 タイトルに戻る</button> 
+
+    </div> 
 
     <div class="btn-row"> 
 
@@ -884,7 +890,7 @@ button.action-btn:active {
 
     </div> 
 
-    <div id="ad-result-wrap" style="margin-top: 12px; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 50px; overflow: hidden;"> 
+    <div id="ad-result-wrap" style="margin-top: 10px; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 50px; overflow: hidden;"> 
 
       <!-- admax --> 
 
@@ -988,7 +994,11 @@ const ENDINGS = {
 
   talk_fail: { id: 'talk_fail', emoji: '💤', title: 'No.6 武勇伝中の居眠り', desc: '上司の長い昔話を聞き流そうとして激怒された!!' }, 
 
-  legend: { id: 'legend', emoji: '👑', title: 'No.7 伝説の社畜 (60秒超え)', desc: '60秒以上生き延びたが、気に入られて二次会カラオケへ連行された!!' } 
+  mango_heaven: { id: 'mango_heaven', emoji: '🥭', title: 'No.7 マンゴー中毒の甘党天国', desc: '濃厚マンゴーの誘惑に負けすぎて南国気分で意識がとろけた。' }, 
+
+  tenjo_drunk: { id: 'tenjo_drunk', emoji: '🍶', title: 'No.8 銘酒「天上」の酔いしれ', desc: '極上の一杯に酔いしれて終電を逃し、翌朝まで余韻に浸った。' }, 
+
+  heavy_combo: { id: 'heavy_combo', emoji: '🔥', title: 'No.9 焼酎＆熱燗のダブルパンチ', desc: '焼酎と熱燗のコンボに胃袋が降参。静かに席で力尽きた。' } 
 
 }; 
 
@@ -1208,7 +1218,7 @@ const ACHIEVEMENTS = [
 
  
 
-const ACH_STORAGE_KEY = 'nomikai_achievements_v4'; 
+const ACH_STORAGE_KEY = 'nomikai_achievements_v5'; 
 
 let achData = loadAchData(); 
 
@@ -1588,7 +1598,7 @@ function checkTimeAchievements(sec) {
 
  
 
-// --- ドリンク&イベント定義 (weight合計 = 100 基準で調整) --- 
+// --- ドリンク&イベント定義 --- 
 
 const ITEMS = [ 
 
@@ -1601,6 +1611,8 @@ const ITEMS = [
       s.mood += 16; 
 
       s.drunk += 14; 
+
+      s.lastDrinkId = 'beer'; 
 
       achData.beerCount += 1; 
 
@@ -1626,6 +1638,8 @@ const ITEMS = [
 
       s.drunk -= 24; 
 
+      s.lastDrinkId = 'water'; 
+
       achData.waterCount += 1; 
 
       saveAchData(); 
@@ -1649,6 +1663,12 @@ const ITEMS = [
       s.mood += 24; 
 
       s.drunk += 28; 
+
+      if (s.lastDrinkId === 'sake') s.heavyComboCount += 1; 
+
+      else s.heavyComboCount = 0; 
+
+      s.lastDrinkId = 'shochu'; 
 
       achData.shochuCount += 1; 
 
@@ -1674,6 +1694,12 @@ const ITEMS = [
 
       s.drunk += 32; 
 
+      if (s.lastDrinkId === 'shochu') s.heavyComboCount += 1; 
+
+      else s.heavyComboCount = 0; 
+
+      s.lastDrinkId = 'sake'; 
+
       achData.sakeCount += 1; 
 
       saveAchData(); 
@@ -1697,6 +1723,8 @@ const ITEMS = [
       s.mood += 4; 
 
       s.drunk -= 16; 
+
+      s.lastDrinkId = 'oj'; 
 
       achData.ojCount += 1; 
 
@@ -1722,6 +1750,8 @@ const ITEMS = [
 
       s.drunk -= 10; 
 
+      s.lastDrinkId = 'cola'; 
+
       achData.colaCount += 1; 
 
       saveAchData(); 
@@ -1745,6 +1775,8 @@ const ITEMS = [
       s.mood += 35; 
 
       s.drunk += 48; 
+
+      s.lastDrinkId = 'strong'; 
 
       achData.strongCount += 1; 
 
@@ -1772,6 +1804,8 @@ const ITEMS = [
 
       s.drunk -= 35; 
 
+      s.lastDrinkId = 'ukon'; 
+
       achData.ukonCount += 1; 
 
       saveAchData(); 
@@ -1791,6 +1825,8 @@ const ITEMS = [
     id: 'cocktail', emoji: '🍸', name: '部長特製カオス酒', desc: '50%で機嫌&酔い全快 / 50%で即死', weight: 5, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
+
+      s.lastDrinkId = 'cocktail'; 
 
       achData.cocktailCount += 1; 
 
@@ -1834,6 +1870,8 @@ const ITEMS = [
 
       s.mood += 24; 
 
+      s.lastDrinkId = 'talk'; 
+
       achData.talkCount += 1; 
 
       saveAchData(); 
@@ -1858,6 +1896,8 @@ const ITEMS = [
 
       s.drunk -= 20; 
 
+      s.lastDrinkId = 'tenjo'; 
+
       achData.tenjoCount += 1; 
 
       saveAchData(); 
@@ -1881,6 +1921,8 @@ const ITEMS = [
       s.mood += 15; 
 
       s.drunk -= 50; 
+
+      s.lastDrinkId = 'mango'; 
 
       achData.mangoCount += 1; 
 
@@ -1916,7 +1958,11 @@ let state = {
 
   currentItem: null, 
 
-  lastFrame: 0 
+  lastFrame: 0, 
+
+  lastDrinkId: null, 
+
+  heavyComboCount: 0 
 
 }; 
 
@@ -1924,7 +1970,7 @@ let state = {
 
 let bestScore = parseFloat(localStorage.getItem('nomikai_best') || '0'); 
 
-let unlocked = JSON.parse(localStorage.getItem('nomikai_zukan') || '[]'); 
+let unlocked = JSON.parse(localStorage.getItem('nomikai_zukan') || '[]').filter(id => Boolean(ENDINGS[id])); 
 
 let lastEnding = null; 
 
@@ -1986,11 +2032,13 @@ function updateMetaUI() {
 
   el.best.textContent = bestScore.toFixed(1); 
 
+  const totalEndings = Object.keys(ENDINGS).length; 
+
   const zukanCountEl = document.getElementById('zukan-count'); 
 
   const achCountEl = document.getElementById('ach-count'); 
 
-  if (zukanCountEl) zukanCountEl.textContent = unlocked.length; 
+  if (zukanCountEl) zukanCountEl.textContent = `${unlocked.length}/${totalEndings}`; 
 
   if (achCountEl) achCountEl.textContent = `${achData.unlocked.length}/${ACHIEVEMENTS.length}`; 
 
@@ -2176,9 +2224,27 @@ function clampAndCheck() {
 
   state.drunk = Math.max(0, state.drunk); 
 
+ 
+
   if (state.drunk >= 100) { 
 
-    triggerEnd('puke'); 
+    if (state.lastDrinkId === 'mango') { 
+
+      triggerEnd('mango_heaven'); 
+
+    } else if (state.lastDrinkId === 'tenjo') { 
+
+      triggerEnd('tenjo_drunk'); 
+
+    } else if (state.heavyComboCount >= 1 && (state.lastDrinkId === 'shochu' || state.lastDrinkId === 'sake')) { 
+
+      triggerEnd('heavy_combo'); 
+
+    } else { 
+
+      triggerEnd('puke'); 
+
+    } 
 
   } else if (state.mood <= 0) { 
 
@@ -2322,7 +2388,11 @@ function startGame() {
 
     currentItem: null, 
 
-    lastFrame: performance.now() 
+    lastFrame: performance.now(), 
+
+    lastDrinkId: null, 
+
+    heavyComboCount: 0 
 
   }; 
 
@@ -2348,6 +2418,30 @@ function startGame() {
 
  
 
+function goHome() { 
+
+  state.running = false; 
+
+  el.app.classList.remove('drunk-wobble'); 
+
+  saveAchData(); 
+
+  updateMetaUI(); 
+
+  el.resultScreen.classList.add('hidden'); 
+
+  el.zukanScreen.classList.add('hidden'); 
+
+  el.achScreen.classList.add('hidden'); 
+
+  el.rulesScreen.classList.add('hidden'); 
+
+  el.titleScreen.classList.remove('hidden'); 
+
+} 
+
+ 
+
 function triggerEnd(endingKey) { 
 
   if (!state.running) return; 
@@ -2360,9 +2454,7 @@ function triggerEnd(endingKey) {
 
  
 
-  const resolvedKey = (state.time >= 60 && endingKey !== 'legend') ? 'legend' : endingKey; 
-
-  const end = ENDINGS[resolvedKey] || ENDINGS.angry; 
+  const end = ENDINGS[endingKey] || ENDINGS.angry; 
 
   lastEnding = end; 
 
