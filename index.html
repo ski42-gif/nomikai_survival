@@ -552,7 +552,7 @@ button.action-btn:active {
 
   width: 100%; 
 
-  max-height: 390px; 
+  max-height: 400px; 
 
   overflow-y: auto; 
 
@@ -590,7 +590,7 @@ button.action-btn:active {
 
 .zukan-item.locked { 
 
-  opacity: 0.45; 
+  opacity: 0.48; 
 
 } 
 
@@ -730,7 +730,7 @@ button.action-btn:active {
 
     <button class="sub-btn" onclick="openZukan()">📖 社畜の末路図鑑 (<span id="zukan-count">0</span>/7)</button> 
 
-    <button class="sub-btn" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0</span>/8)</button> 
+    <button class="sub-btn" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0</span>/39)</button> 
 
   </div> 
 
@@ -872,31 +872,153 @@ const ENDINGS = {
 
  
 
-// --- 実績 (Achievements) 定義 --- 
+// --- 実績シリーズ定義 (prevId があるものは prevId 解除後に条件が見える) --- 
 
 const ACHIEVEMENTS = [ 
 
-  { id: 'survive_30',  title: '一次会突破',     desc: '1プレイで30秒生き延びた' }, 
+  // 1プレイ生存時間シリーズ 
 
-  { id: 'survive_60',  title: '二次会突入',     desc: '1プレイで60秒生き延びた（そのまま続行可能！）' }, 
+  { id: 'survive_30',  prevId: null,          title: '一次会突破',         desc: '1プレイで30秒生き延びた' }, 
 
-  { id: 'survive_100', title: '終電逃し確定',   desc: '1プレイで100秒生き延びた' }, 
+  { id: 'survive_60',  prevId: 'survive_30',  title: '二次会突入',         desc: '1プレイで60秒生き延びた' }, 
 
-  { id: 'survive_180', title: '伝説の社畜',     desc: '1プレイで180秒生き延びた' }, 
+  { id: 'survive_100', prevId: 'survive_60',  title: '終電逃し確定',       desc: '1プレイで100秒生き延びた' }, 
 
-  { id: 'beer_10',     title: 'とりあえず生！', desc: '累計10回生ビールを飲んだ' }, 
+  { id: 'survive_180', prevId: 'survive_100', title: '伝説の社畜',         desc: '1プレイで180秒生き延びた' }, 
 
-  { id: 'beer_100',    title: '痛風予備軍',     desc: '累計100回生ビールを飲んだ' }, 
+ 
 
-  { id: 'throw_50',    title: '植木鉢の友達',   desc: '累計50回お酒を捨てた' }, 
+  // 累計生存時間シリーズ (1, 5, 10, 25, 50, 100分) 
 
-  { id: 'play_10',     title: '飲み会常連',     desc: '累計10回プレイした' } 
+  { id: 'total_time_1',   prevId: null,               title: '1分の耐久戦',       desc: '累計生存時間が1分に到達した' }, 
+
+  { id: 'total_time_5',   prevId: 'total_time_1',   title: '5分の宴会',         desc: '累計生存時間が5分に到達した' }, 
+
+  { id: 'total_time_10',  prevId: 'total_time_5',   title: '10分の長丁場',       desc: '累計生存時間が10分に到達した' }, 
+
+  { id: 'total_time_25',  prevId: 'total_time_10',  title: '25分の鉄人',         desc: '累計生存時間が25分に到達した' }, 
+
+  { id: 'total_time_50',  prevId: 'total_time_25',  title: '50分の深夜営業',     desc: '累計生存時間が50分に到達した' }, 
+
+  { id: 'total_time_100', prevId: 'total_time_50',  title: '100分の不死鳥',       desc: '累計生存時間が100分に到達した' }, 
+
+ 
+
+  // 生ビールシリーズ 
+
+  { id: 'beer_10',   prevId: null,       title: 'とりあえず生！',     desc: '生ビールを累計10回飲んだ' }, 
+
+  { id: 'beer_100',  prevId: 'beer_10',  title: '痛風予備軍',         desc: '生ビールを累計100回飲んだ' }, 
+
+  { id: 'beer_500',  prevId: 'beer_100', title: 'ビールサーバー化',   desc: '生ビールを累計500回飲んだ' }, 
+
+  { id: 'beer_1000', prevId: 'beer_500', title: '麦芽の化身',         desc: '生ビールを累計1000回飲んだ' }, 
+
+ 
+
+  // 捨てるシリーズ 
+
+  { id: 'throw_50', prevId: null, title: '植木鉢の友達', desc: 'お酒を累計50回捨てた' }, 
+
+ 
+
+  // 上司の武勇伝シリーズ 
+
+  { id: 'talk_10',   prevId: null,       title: '若かりし頃の聞き役', desc: '上司の武勇伝を累計10回聞いた' }, 
+
+  { id: 'talk_100',  prevId: 'talk_10',  title: '昭和の語り部',       desc: '上司の武勇伝を累計100回聞いた' }, 
+
+  { id: 'talk_500',  prevId: 'talk_100', title: '相槌マシーン',       desc: '上司の武勇伝を累計500回聞いた' }, 
+
+  { id: 'talk_1000', prevId: 'talk_500', title: '人間蓄音機',         desc: '上司の武勇伝を累計1000回聞いた' }, 
+
+ 
+
+  // チェイサー（水）シリーズ 
+
+  { id: 'water_10',   prevId: null,        title: '水分補給の達人',   desc: 'チェイサー(水)を累計10回飲んだ' }, 
+
+  { id: 'water_100',  prevId: 'water_10',  title: '清流の飲み手',     desc: 'チェイサー(水)を累計100回飲んだ' }, 
+
+  { id: 'water_500',  prevId: 'water_100', title: 'ミネラル社畜',     desc: 'チェイサー(水)を累計500回飲んだ' }, 
+
+  { id: 'water_1000', prevId: 'water_500', title: '大河の源流',       desc: 'チェイサー(水)を累計1000回飲んだ' }, 
+
+ 
+
+  // 黄金のウコンシリーズ 
+
+  { id: 'ukon_10',   prevId: null,       title: 'ウコン信者',       desc: '黄金のウコンを累計10回飲んだ' }, 
+
+  { id: 'ukon_100',  prevId: 'ukon_10',  title: 'クルクミン体質',   desc: '黄金のウコンを累計100回飲んだ' }, 
+
+  { id: 'ukon_500',  prevId: 'ukon_100', title: '不死身の肝臓',     desc: '黄金のウコンを累計500回飲んだ' }, 
+
+  { id: 'ukon_1000', prevId: 'ukon_500', title: '黄金の肝臓神',     desc: '黄金のウコンを累計1000回飲んだ' }, 
+
+ 
+
+  // 部長特製カオス酒（飲んだ回数）シリーズ 
+
+  { id: 'cocktail_10',   prevId: null,           title: 'カオスへの挑戦者', desc: '部長特製カオス酒を累計10回飲んだ' }, 
+
+  { id: 'cocktail_100',  prevId: 'cocktail_10',  title: '混沌の常連',       desc: '部長特製カオス酒を累計100回飲んだ' }, 
+
+  { id: 'cocktail_500',  prevId: 'cocktail_100', title: '深淵のテイスター', desc: '部長特製カオス酒を累計500回飲んだ' }, 
+
+  { id: 'cocktail_1000', prevId: 'cocktail_500', title: 'カオスの支配者',   desc: '部長特製カオス酒を累計1000回飲んだ' }, 
+
+ 
+
+  // 部長特製カオス酒で生き延びたシリーズ 
+
+  { id: 'cocktail_win_1',   prevId: null,               title: '運否天賦の勝利',   desc: '部長特製カオス酒で累計1回生き延びた' }, 
+
+  { id: 'cocktail_win_10',  prevId: 'cocktail_win_1',   title: '強運の社畜',       desc: '部長特製カオス酒で累計10回生き延びた' }, 
+
+  { id: 'cocktail_win_100', prevId: 'cocktail_win_10',  title: '奇跡の確率突破',   desc: '部長特製カオス酒で累計100回生き延びた' }, 
+
+ 
+
+  // 部長特製カオス酒で死んだシリーズ 
+
+  { id: 'cocktail_die_1',   prevId: null,               title: 'カオスの洗礼',     desc: '部長特製カオス酒で累計1回死んだ' }, 
+
+  { id: 'cocktail_die_10',  prevId: 'cocktail_die_1',   title: '呪われしグラス',   desc: '部長特製カオス酒で累計10回死んだ' }, 
+
+  { id: 'cocktail_die_100', prevId: 'cocktail_die_10',  title: '破滅のギャンブラー', desc: '部長特製カオス酒で累計100回死んだ' }, 
+
+ 
+
+  // 謎のロックシリーズ 
+
+  { id: 'strong_10',   prevId: null,         title: '劇薬チャレンジャー', desc: '謎のロックを累計10回飲んだ' }, 
+
+  { id: 'strong_100',  prevId: 'strong_10',  title: '喉が鋼鉄になった',   desc: '謎のロックを累計100回飲んだ' }, 
+
+  { id: 'strong_500',  prevId: 'strong_100', title: '度数96%の狂気',     desc: '謎のロックを累計500回飲んだ' }, 
+
+  { id: 'strong_1000', prevId: 'strong_500', title: 'アルコール超越者',   desc: '謎のロックを累計1000回飲んだ' }, 
+
+ 
+
+  // 累計プレイ回数シリーズ 
+
+  { id: 'play_10',   prevId: null,       title: '飲み会常連',       desc: '累計10回遊んだ' }, 
+
+  { id: 'play_50',   prevId: 'play_10',  title: '毎晩が戦場',       desc: '累計50回遊んだ' }, 
+
+  { id: 'play_100',  prevId: 'play_50',  title: '百戦錬磨のサラリーマン', desc: '累計100回遊んだ' }, 
+
+  { id: 'play_500',  prevId: 'play_100', title: '居酒屋の主',       desc: '累計500回遊んだ' }, 
+
+  { id: 'play_1000', prevId: 'play_500', title: '終わらない飲み会', desc: '累計1000回遊んだ' } 
 
 ]; 
 
  
 
-const ACH_STORAGE_KEY = 'nomikai_achievements_v1'; 
+const ACH_STORAGE_KEY = 'nomikai_achievements_v3'; 
 
 let achData = loadAchData(); 
 
@@ -910,9 +1032,25 @@ function loadAchData() {
 
     return { 
 
+      totalSurvivedSeconds: Number(raw?.totalSurvivedSeconds) || 0, 
+
       beerCount: Number(raw?.beerCount) || 0, 
 
       throwCount: Number(raw?.throwCount) || 0, 
+
+      talkCount: Number(raw?.talkCount) || 0, 
+
+      waterCount: Number(raw?.waterCount) || 0, 
+
+      ukonCount: Number(raw?.ukonCount) || 0, 
+
+      cocktailCount: Number(raw?.cocktailCount) || 0, 
+
+      cocktailWinCount: Number(raw?.cocktailWinCount) || 0, 
+
+      cocktailDieCount: Number(raw?.cocktailDieCount) || 0, 
+
+      strongCount: Number(raw?.strongCount) || 0, 
 
       playCount: Number(raw?.playCount) || 0, 
 
@@ -922,7 +1060,33 @@ function loadAchData() {
 
   } catch (e) { 
 
-    return { beerCount: 0, throwCount: 0, playCount: 0, unlocked: [] }; 
+    return { 
+
+      totalSurvivedSeconds: 0, 
+
+      beerCount: 0, 
+
+      throwCount: 0, 
+
+      talkCount: 0, 
+
+      waterCount: 0, 
+
+      ukonCount: 0, 
+
+      cocktailCount: 0, 
+
+      cocktailWinCount: 0, 
+
+      cocktailDieCount: 0, 
+
+      strongCount: 0, 
+
+      playCount: 0, 
+
+      unlocked: [] 
+
+    }; 
 
   } 
 
@@ -1022,6 +1186,122 @@ function showAchBanner(title, desc) {
 
  
 
+function checkTotalTimeAchievements() { 
+
+  const mins = achData.totalSurvivedSeconds / 60; 
+
+  if (mins >= 1)   unlockAchievement('total_time_1'); 
+
+  if (mins >= 5)   unlockAchievement('total_time_5'); 
+
+  if (mins >= 10)  unlockAchievement('total_time_10'); 
+
+  if (mins >= 25)  unlockAchievement('total_time_25'); 
+
+  if (mins >= 50)  unlockAchievement('total_time_50'); 
+
+  if (mins >= 100) unlockAchievement('total_time_100'); 
+
+} 
+
+ 
+
+function checkCountAchievements() { 
+
+  if (achData.beerCount >= 10)   unlockAchievement('beer_10'); 
+
+  if (achData.beerCount >= 100)  unlockAchievement('beer_100'); 
+
+  if (achData.beerCount >= 500)  unlockAchievement('beer_500'); 
+
+  if (achData.beerCount >= 1000) unlockAchievement('beer_1000'); 
+
+ 
+
+  if (achData.throwCount >= 50)  unlockAchievement('throw_50'); 
+
+ 
+
+  if (achData.talkCount >= 10)   unlockAchievement('talk_10'); 
+
+  if (achData.talkCount >= 100)  unlockAchievement('talk_100'); 
+
+  if (achData.talkCount >= 500)  unlockAchievement('talk_500'); 
+
+  if (achData.talkCount >= 1000) unlockAchievement('talk_1000'); 
+
+ 
+
+  if (achData.waterCount >= 10)   unlockAchievement('water_10'); 
+
+  if (achData.waterCount >= 100)  unlockAchievement('water_100'); 
+
+  if (achData.waterCount >= 500)  unlockAchievement('water_500'); 
+
+  if (achData.waterCount >= 1000) unlockAchievement('water_1000'); 
+
+ 
+
+  if (achData.ukonCount >= 10)   unlockAchievement('ukon_10'); 
+
+  if (achData.ukonCount >= 100)  unlockAchievement('ukon_100'); 
+
+  if (achData.ukonCount >= 500)  unlockAchievement('ukon_500'); 
+
+  if (achData.ukonCount >= 1000) unlockAchievement('ukon_1000'); 
+
+ 
+
+  if (achData.cocktailCount >= 10)   unlockAchievement('cocktail_10'); 
+
+  if (achData.cocktailCount >= 100)  unlockAchievement('cocktail_100'); 
+
+  if (achData.cocktailCount >= 500)  unlockAchievement('cocktail_500'); 
+
+  if (achData.cocktailCount >= 1000) unlockAchievement('cocktail_1000'); 
+
+ 
+
+  if (achData.cocktailWinCount >= 1)   unlockAchievement('cocktail_win_1'); 
+
+  if (achData.cocktailWinCount >= 10)  unlockAchievement('cocktail_win_10'); 
+
+  if (achData.cocktailWinCount >= 100) unlockAchievement('cocktail_win_100'); 
+
+ 
+
+  if (achData.cocktailDieCount >= 1)   unlockAchievement('cocktail_die_1'); 
+
+  if (achData.cocktailDieCount >= 10)  unlockAchievement('cocktail_die_10'); 
+
+  if (achData.cocktailDieCount >= 100) unlockAchievement('cocktail_die_100'); 
+
+ 
+
+  if (achData.strongCount >= 10)   unlockAchievement('strong_10'); 
+
+  if (achData.strongCount >= 100)  unlockAchievement('strong_100'); 
+
+  if (achData.strongCount >= 500)  unlockAchievement('strong_500'); 
+
+  if (achData.strongCount >= 1000) unlockAchievement('strong_1000'); 
+
+ 
+
+  if (achData.playCount >= 10)   unlockAchievement('play_10'); 
+
+  if (achData.playCount >= 50)   unlockAchievement('play_50'); 
+
+  if (achData.playCount >= 100)  unlockAchievement('play_100'); 
+
+  if (achData.playCount >= 500)  unlockAchievement('play_500'); 
+
+  if (achData.playCount >= 1000) unlockAchievement('play_1000'); 
+
+} 
+
+ 
+
 function checkTimeAchievements(sec) { 
 
   if (sec >= 30)  unlockAchievement('survive_30'); 
@@ -1031,6 +1311,8 @@ function checkTimeAchievements(sec) {
   if (sec >= 100) unlockAchievement('survive_100'); 
 
   if (sec >= 180) unlockAchievement('survive_180'); 
+
+  checkTotalTimeAchievements(); 
 
 } 
 
@@ -1054,9 +1336,7 @@ const ITEMS = [
 
       saveAchData(); 
 
-      if (achData.beerCount >= 10) unlockAchievement('beer_10'); 
-
-      if (achData.beerCount >= 100) unlockAchievement('beer_100'); 
+      checkCountAchievements(); 
 
       showToast('グビッ！うまい！'); 
 
@@ -1076,6 +1356,12 @@ const ITEMS = [
 
       s.drunk -= 24; 
 
+      achData.waterCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
       showToast('ふぅ...水がしみる...'); 
 
       playTone(660, 'sine', 0.15); 
@@ -1093,6 +1379,12 @@ const ITEMS = [
       s.mood += 35; 
 
       s.drunk += 48; 
+
+      achData.strongCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
 
       showToast('カァーーッ!! 喉が焼ける!!'); 
 
@@ -1114,6 +1406,12 @@ const ITEMS = [
 
       s.drunk -= 35; 
 
+      achData.ukonCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
       showToast('肝臓が復活した!!'); 
 
       playTone(880, 'sine', 0.25); 
@@ -1128,17 +1426,31 @@ const ITEMS = [
 
     drink: (s) => { 
 
+      achData.cocktailCount += 1; 
+
       if (Math.random() < 0.5) { 
 
         s.mood = 100; 
 
         s.drunk = 0; 
 
+        achData.cocktailWinCount += 1; 
+
+        saveAchData(); 
+
+        checkCountAchievements(); 
+
         showToast('🎉 大当たり！完全回復!!'); 
 
         playTone(980, 'triangle', 0.3); 
 
       } else { 
+
+        achData.cocktailDieCount += 1; 
+
+        saveAchData(); 
+
+        checkCountAchievements(); 
 
         triggerEnd('gamble_fail'); 
 
@@ -1155,6 +1467,12 @@ const ITEMS = [
     drink: (s) => { 
 
       s.mood += 24; 
+
+      achData.talkCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
 
       showToast('「さすが部長！勉強になります！」'); 
 
@@ -1256,7 +1574,7 @@ function updateMetaUI() {
 
   if (zukanCountEl) zukanCountEl.textContent = unlocked.length; 
 
-  if (achCountEl) achCountEl.textContent = achData.unlocked.length; 
+  if (achCountEl) achCountEl.textContent = `${achData.unlocked.length}/${ACHIEVEMENTS.length}`; 
 
 } 
 
@@ -1378,7 +1696,7 @@ el.btnDump.addEventListener('click', () => {
 
   saveAchData(); 
 
-  if (achData.throwCount >= 50) unlockAchievement('throw_50'); 
+  checkCountAchievements(); 
 
  
 
@@ -1508,6 +1826,10 @@ function renderGauges() {
 
  
 
+let lastTotalSaveTime = 0; 
+
+ 
+
 function gameLoop(now) { 
 
   if (!state.running) return; 
@@ -1518,11 +1840,25 @@ function gameLoop(now) {
 
   state.time += dt; 
 
+  achData.totalSurvivedSeconds += dt; 
+
   el.time.textContent = state.time.toFixed(1); 
 
  
 
   checkTimeAchievements(state.time); 
+
+ 
+
+  // 1秒ごとに累計生存時間を保存して無駄な書き込みを抑制 
+
+  if (now - lastTotalSaveTime > 1000) { 
+
+    lastTotalSaveTime = now; 
+
+    saveAchData(); 
+
+  } 
 
  
 
@@ -1546,7 +1882,7 @@ function startGame() {
 
   saveAchData(); 
 
-  if (achData.playCount >= 10) unlockAchievement('play_10'); 
+  checkCountAchievements(); 
 
  
 
@@ -1567,6 +1903,8 @@ function startGame() {
     lastFrame: performance.now() 
 
   }; 
+
+  lastTotalSaveTime = performance.now(); 
 
   el.titleScreen.classList.add('hidden'); 
 
@@ -1594,9 +1932,9 @@ function triggerEnd(endingKey) {
 
   el.app.classList.remove('drunk-wobble'); 
 
- 
+  saveAchData(); 
 
-  // 60秒以上生き延びて倒れた場合は「伝説の社畜」扱いにもできる 
+ 
 
   const resolvedKey = (state.time >= 60 && endingKey !== 'legend') ? 'legend' : endingKey; 
 
@@ -1678,13 +2016,37 @@ function closeZukan() {
 
  
 
+function isAchievementConditionVisible(ach) { 
+
+  if (achData.unlocked.includes(ach.id)) return true; 
+
+  if (!ach.prevId) return true; 
+
+  return achData.unlocked.includes(ach.prevId); 
+
+} 
+
+ 
+
+function formatTotalTime(sec) { 
+
+  const mins = Math.floor(sec / 60); 
+
+  const remSec = Math.floor(sec % 60); 
+
+  return mins > 0 ? `${mins}分${remSec}秒` : `${remSec}秒`; 
+
+} 
+
+ 
+
 function openAchievements() { 
 
   const list = document.getElementById('ach-list'); 
 
   const summary = document.getElementById('ach-stats-summary'); 
 
-  summary.textContent = `解除: ${achData.unlocked.length}/${ACHIEVEMENTS.length} ｜ 生ビール: ${achData.beerCount}杯 ｜ 捨てた酒: ${achData.throwCount}回 ｜ プレイ: ${achData.playCount}回`; 
+  summary.textContent = `解除: ${achData.unlocked.length}/${ACHIEVEMENTS.length} ｜ 累計生存: ${formatTotalTime(achData.totalSurvivedSeconds)} ｜ 生ビール: ${achData.beerCount}杯 ｜ プレイ: ${achData.playCount}回`; 
 
   list.innerHTML = ''; 
 
@@ -1694,15 +2056,31 @@ function openAchievements() {
 
     const isUnlocked = achData.unlocked.includes(ach.id); 
 
+    const canSeeCondition = isAchievementConditionVisible(ach); 
+
+ 
+
     const div = document.createElement('div'); 
 
-    div.className = 'zukan-item' + (isUnlocked ? ' unlocked-ach' : ' locked'); 
+    if (isUnlocked) { 
 
-    div.innerHTML = isUnlocked 
+      div.className = 'zukan-item unlocked-ach'; 
 
-      ? `<b style="color:#ffd166;">🏆 ${ach.title}</b><br><span style="color:#eee;">${ach.desc}</span>` 
+      div.innerHTML = `<b style="color:#ffd166;">🏆 ${ach.title}</b><br><span style="color:#eee;">${ach.desc}</span>`; 
 
-      : `<b>🔒 ${ach.title}</b><br><span>${ach.desc}</span>`; 
+    } else if (canSeeCondition) { 
+
+      div.className = 'zukan-item locked'; 
+
+      div.innerHTML = `<b>🔒 ${ach.title}</b><br><span>${ach.desc}</span>`; 
+
+    } else { 
+
+      div.className = 'zukan-item locked'; 
+
+      div.innerHTML = `<b>🔒 ???</b><br><span>前の実績を解除すると条件が表示されます</span>`; 
+
+    } 
 
     list.appendChild(div); 
 
