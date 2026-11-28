@@ -284,7 +284,7 @@ body {
 
 .item-card { 
 
-  width: 240px; 
+  width: 248px; 
 
   background: rgba(255, 255, 255, 0.12); 
 
@@ -292,7 +292,7 @@ body {
 
   border-radius: 18px; 
 
-  padding: 16px 12px; 
+  padding: 14px 12px; 
 
   text-align: center; 
 
@@ -300,13 +300,23 @@ body {
 
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); 
 
-  transition: transform 0.1s; 
+  transition: transform 0.1s, border-color 0.2s, box-shadow 0.2s; 
+
+} 
+
+.item-card.ultra-rare { 
+
+  border-color: #ffd166; 
+
+  background: linear-gradient(180deg, rgba(255, 209, 102, 0.24), rgba(255, 107, 107, 0.16)); 
+
+  box-shadow: 0 0 22px rgba(255, 209, 102, 0.55); 
 
 } 
 
 .item-emoji { 
 
-  font-size: 64px; 
+  font-size: 60px; 
 
   line-height: 1.1; 
 
@@ -314,7 +324,7 @@ body {
 
 .item-name { 
 
-  font-size: 18px; 
+  font-size: 17px; 
 
   font-weight: bold; 
 
@@ -440,7 +450,7 @@ button.action-btn:active {
 
 } 
 
-/* オーバーレイ画面(タイトル / リザルト / 図鑑 / 実績) */ 
+/* オーバーレイ画面(タイトル / リザルト / 図鑑 / 実績 / 詳細ルール) */ 
 
 .overlay { 
 
@@ -458,7 +468,7 @@ button.action-btn:active {
 
   align-items: center; 
 
-  padding: 20px; 
+  padding: 18px; 
 
   text-align: center; 
 
@@ -470,7 +480,7 @@ button.action-btn:active {
 
 .title-logo { 
 
-  font-size: 32px; 
+  font-size: 30px; 
 
   font-weight: 900; 
 
@@ -478,7 +488,7 @@ button.action-btn:active {
 
   text-shadow: 0 3px 0 #b55d00; 
 
-  margin-bottom: 8px; 
+  margin-bottom: 4px; 
 
 } 
 
@@ -488,17 +498,31 @@ button.action-btn:active {
 
   border-radius: 12px; 
 
-  padding: 12px; 
+  padding: 10px 12px; 
 
-  font-size: 13px; 
+  font-size: 12.5px; 
 
-  line-height: 1.6; 
+  line-height: 1.55; 
 
   text-align: left; 
 
-  margin: 12px 0; 
+  margin: 10px 0; 
 
   width: 100%; 
+
+} 
+
+.btn-row { 
+
+  display: grid; 
+
+  grid-template-columns: 1fr 1fr; 
+
+  gap: 8px; 
+
+  width: 100%; 
+
+  margin-top: 6px; 
 
 } 
 
@@ -512,7 +536,7 @@ button.action-btn:active {
 
   border-radius: 12px; 
 
-  padding: 12px 24px; 
+  padding: 12px 20px; 
 
   font-size: 16px; 
 
@@ -520,7 +544,7 @@ button.action-btn:active {
 
   cursor: pointer; 
 
-  margin-top: 8px; 
+  margin-top: 6px; 
 
   width: 100%; 
 
@@ -536,13 +560,13 @@ button.action-btn:active {
 
   border-radius: 10px; 
 
-  padding: 9px 16px; 
+  padding: 9px 12px; 
 
-  font-size: 13px; 
+  font-size: 12.5px; 
 
   cursor: pointer; 
 
-  margin-top: 7px; 
+  margin-top: 0; 
 
   width: 100%; 
 
@@ -552,7 +576,7 @@ button.action-btn:active {
 
   width: 100%; 
 
-  max-height: 400px; 
+  max-height: 410px; 
 
   overflow-y: auto; 
 
@@ -578,6 +602,8 @@ button.action-btn:active {
 
   font-size: 12px; 
 
+  line-height: 1.45; 
+
 } 
 
 .zukan-item.unlocked-ach { 
@@ -591,6 +617,26 @@ button.action-btn:active {
 .zukan-item.locked { 
 
   opacity: 0.48; 
+
+} 
+
+.rare-tag { 
+
+  display: inline-block; 
+
+  font-size: 10px; 
+
+  font-weight: bold; 
+
+  background: #ffd166; 
+
+  color: #1a1625; 
+
+  padding: 1px 6px; 
+
+  border-radius: 6px; 
+
+  margin-left: 4px; 
 
 } 
 
@@ -706,31 +752,103 @@ button.action-btn:active {
 
   <div id="title-screen" class="overlay"> 
 
-    <div style="font-size: 48px;">🍻</div> 
+    <div style="font-size: 44px;">🍻</div> 
 
     <div class="title-logo">飲み会サバイバル</div> 
 
-    <div style="font-size: 13px; color: #ccc;">〜終電までの限界チキンドリンク〜</div> 
+    <div style="font-size: 12.5px; color: #ccc;">〜終電までの限界チキンドリンク〜</div> 
 
     <div class="rule-box"> 
 
-      <b>【ルール】</b><br> 
+      <b>【基本ルール】</b><br> 
 
-      ① <b>上司の機嫌</b>が0%になると説教エンド！<br> 
+      ① <b>上司の機嫌</b>が0%になるとクビ・説教エンド！<br> 
 
       ② <b>酔い度</b>が100%を超えるとリバース即死！<br> 
 
-      ③ ヤバい酒は<b>「観葉植物に捨てる」</b>で回避しろ！<br> 
+      ③ ヤバい酒は<b>「観葉植物に捨てる」</b>で回避！<br> 
 
-      ※60秒・100秒を超えても限界まで生き残れるぞ！ 
+      ④ 60秒・100秒を超えてもそのまま限界まで続行！ 
 
     </div> 
 
     <button class="main-btn" onclick="startGame()">飲み会に参加する！</button> 
 
-    <button class="sub-btn" onclick="openZukan()">📖 社畜の末路図鑑 (<span id="zukan-count">0</span>/7)</button> 
+    <div class="btn-row"> 
 
-    <button class="sub-btn" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0</span>/39)</button> 
+      <button class="sub-btn" onclick="openRules()">📜 詳細ルール</button> 
+
+      <button class="sub-btn" onclick="openZukan()">📖 末路図鑑 (<span id="zukan-count">0</span>/7)</button> 
+
+    </div> 
+
+    <button class="sub-btn" style="margin-top: 7px;" onclick="openAchievements()">🏆 実績一覧 (<span id="ach-count">0</span>/61)</button> 
+
+  </div> 
+
+ 
+
+  <!-- 詳細ルール画面 --> 
+
+  <div id="rules-screen" class="overlay hidden"> 
+
+    <div style="font-size: 22px; font-weight: bold; color: #ffd166;">📜 詳細ルール・ドリンク解説</div> 
+
+    <div class="zukan-list"> 
+
+      <div class="zukan-item"> 
+
+        <b style="color:#ffd166;">🍺 定番＆低確率ドリンク・チェイサー</b><br> 
+
+        ・<b>生ビール</b>：機嫌 +16 / 酔い +14<br> 
+
+        ・<b>チェイサー(水)</b>：機嫌 -6 / 酔い -24<br> 
+
+        ・<b>焼酎</b>（低確率）：機嫌 +24 / 酔い +28<br> 
+
+        ・<b>熱燗</b>（低確率）：機嫌 +28 / 酔い +32<br> 
+
+        ・<b>オレンジジュース</b>（低確率）：機嫌 +4 / 酔い -16<br> 
+
+        ・<b>コーラ</b>（低確率）：機嫌 +8 / 酔い -10 
+
+      </div> 
+
+      <div class="zukan-item"> 
+
+        <b style="color:#ff9f1c;">⚠️ 危険・特殊イベント</b><br> 
+
+        ・<b>謎のロック(96%)</b>：機嫌 +35 / 酔い +48（酔い100以上で即KO）<br> 
+
+        ・<b>黄金のウコン</b>：機嫌 +5 / 酔い -35<br> 
+
+        ・<b>部長特製カオス酒</b>：50%で機嫌100＆酔い0 / 50%で即死<br> 
+
+        ・<b>上司の長い武勇伝</b>：捨てられない！相槌で機嫌 +24 
+
+      </div> 
+
+      <div class="zukan-item"> 
+
+        <b style="color:#ffd166;">✨ 超レア枠（ごくまれに出現）</b><br> 
+
+        ・<b>幻の純米大吟醸「天上」</b>：機嫌 +50 / 酔い -20<br> 
+
+        ・<b>伝説の100%濃厚マンゴージュース</b>：機嫌 +15 / 酔い -50 
+
+      </div> 
+
+      <div class="zukan-item"> 
+
+        <b style="color:#06d6a0;">🌿 「捨てる」の仕様</b><br> 
+
+        ・捨てるたびにバレ率が上がり、連続で捨てすぎると植物が枯れてバレることも…！ 
+
+      </div> 
+
+    </div> 
+
+    <button class="main-btn" onclick="closeRules()">戻る</button> 
 
   </div> 
 
@@ -756,11 +874,15 @@ button.action-btn:active {
 
     <button class="main-btn" onclick="startGame()">もう1軒行く (リトライ)</button> 
 
-    <button class="sub-btn" onclick="shareX()">𝕏 死因をポストする</button> 
+    <button class="sub-btn" style="margin-top: 7px;" onclick="shareX()">𝕏 死因をポストする</button> 
 
-    <button class="sub-btn" onclick="openZukan()">📖 社畜の末路図鑑を見る</button> 
+    <div class="btn-row"> 
 
-    <button class="sub-btn" onclick="openAchievements()">🏆 実績一覧を見る</button> 
+      <button class="sub-btn" onclick="openZukan()">📖 末路図鑑</button> 
+
+      <button class="sub-btn" onclick="openAchievements()">🏆 実績一覧</button> 
+
+    </div> 
 
     <div id="ad-result-wrap" style="margin-top: 12px; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 50px; overflow: hidden;"> 
 
@@ -916,6 +1038,74 @@ const ACHIEVEMENTS = [
 
  
 
+  // 焼酎シリーズ 
+
+  { id: 'shochu_10',   prevId: null,         title: '焼酎入門',           desc: '焼酎を累計10回飲んだ' }, 
+
+  { id: 'shochu_100',  prevId: 'shochu_10',  title: '焼酎ロック愛好家',   desc: '焼酎を累計100回飲んだ' }, 
+
+  { id: 'shochu_500',  prevId: 'shochu_100', title: '本格焼酎の鬼',       desc: '焼酎を累計500回飲んだ' }, 
+
+  { id: 'shochu_1000', prevId: 'shochu_500', title: '焼酎壺の主',         desc: '焼酎を累計1000回飲んだ' }, 
+
+ 
+
+  // 熱燗シリーズ 
+
+  { id: 'sake_10',   prevId: null,       title: 'ほっこり熱燗',       desc: '熱燗を累計10回飲んだ' }, 
+
+  { id: 'sake_100',  prevId: 'sake_10',  title: 'おちょこ百景',       desc: '熱燗を累計100回飲んだ' }, 
+
+  { id: 'sake_500',  prevId: 'sake_100', title: '徳利の達人',         desc: '熱燗を累計500回飲んだ' }, 
+
+  { id: 'sake_1000', prevId: 'sake_500', title: '熱燗の仙人',         desc: '熱燗を累計1000回飲んだ' }, 
+
+ 
+
+  // オレンジジュースシリーズ 
+
+  { id: 'oj_10',   prevId: null,      title: 'ビタミン補給',       desc: 'オレンジジュースを累計10回飲んだ' }, 
+
+  { id: 'oj_100',  prevId: 'oj_10',   title: '柑橘系サバイバー',   desc: 'オレンジジュースを累計100回飲んだ' }, 
+
+  { id: 'oj_500',  prevId: 'oj_100',  title: '果樹園の住人',       desc: 'オレンジジュースを累計500回飲んだ' }, 
+
+  { id: 'oj_1000', prevId: 'oj_500',  title: '100%果汁の精霊',     desc: 'オレンジジュースを累計1000回飲んだ' }, 
+
+ 
+
+  // コーラシリーズ 
+
+  { id: 'cola_10',   prevId: null,        title: 'シュワッと一息',     desc: 'コーラを累計10回飲んだ' }, 
+
+  { id: 'cola_100',  prevId: 'cola_10',   title: '炭酸ブレイク常連',   desc: 'コーラを累計100回飲んだ' }, 
+
+  { id: 'cola_500',  prevId: 'cola_100',  title: 'ブラック炭酸中毒',   desc: 'コーラを累計500回飲んだ' }, 
+
+  { id: 'cola_1000', prevId: 'cola_500',  title: '炭酸の帝王',         desc: 'コーラを累計1000回飲んだ' }, 
+
+ 
+
+  // 超レア酒：幻の純米大吟醸「天上」シリーズ 
+
+  { id: 'tenjo_1',  prevId: null,        title: '天上の美酒',         desc: '幻の純米大吟醸「天上」を累計1回飲んだ' }, 
+
+  { id: 'tenjo_5',  prevId: 'tenjo_1',   title: '雲上の晩酌',         desc: '幻の純米大吟醸「天上」を累計5回飲んだ' }, 
+
+  { id: 'tenjo_20', prevId: 'tenjo_5',   title: '酒神に選ばれし者',   desc: '幻の純米大吟醸「天上」を累計20回飲んだ' }, 
+
+ 
+
+  // 超レアジュース：伝説の100%濃厚マンゴージュースシリーズ 
+
+  { id: 'mango_1',  prevId: null,        title: '常夏の奇跡',         desc: '伝説の濃厚マンゴージュースを累計1回飲んだ' }, 
+
+  { id: 'mango_5',  prevId: 'mango_1',   title: '南国リゾート気分',   desc: '伝説の濃厚マンゴージュースを累計5回飲んだ' }, 
+
+  { id: 'mango_20', prevId: 'mango_5',   title: 'マンゴー神話の体現者', desc: '伝説の濃厚マンゴージュースを累計20回飲んだ' }, 
+
+ 
+
   // 捨てるシリーズ 
 
   { id: 'throw_50', prevId: null, title: '植木鉢の友達', desc: 'お酒を累計50回捨てた' }, 
@@ -1018,7 +1208,7 @@ const ACHIEVEMENTS = [
 
  
 
-const ACH_STORAGE_KEY = 'nomikai_achievements_v3'; 
+const ACH_STORAGE_KEY = 'nomikai_achievements_v4'; 
 
 let achData = loadAchData(); 
 
@@ -1035,6 +1225,18 @@ function loadAchData() {
       totalSurvivedSeconds: Number(raw?.totalSurvivedSeconds) || 0, 
 
       beerCount: Number(raw?.beerCount) || 0, 
+
+      shochuCount: Number(raw?.shochuCount) || 0, 
+
+      sakeCount: Number(raw?.sakeCount) || 0, 
+
+      ojCount: Number(raw?.ojCount) || 0, 
+
+      colaCount: Number(raw?.colaCount) || 0, 
+
+      tenjoCount: Number(raw?.tenjoCount) || 0, 
+
+      mangoCount: Number(raw?.mangoCount) || 0, 
 
       throwCount: Number(raw?.throwCount) || 0, 
 
@@ -1065,6 +1267,18 @@ function loadAchData() {
       totalSurvivedSeconds: 0, 
 
       beerCount: 0, 
+
+      shochuCount: 0, 
+
+      sakeCount: 0, 
+
+      ojCount: 0, 
+
+      colaCount: 0, 
+
+      tenjoCount: 0, 
+
+      mangoCount: 0, 
 
       throwCount: 0, 
 
@@ -1218,6 +1432,62 @@ function checkCountAchievements() {
 
  
 
+  if (achData.shochuCount >= 10)   unlockAchievement('shochu_10'); 
+
+  if (achData.shochuCount >= 100)  unlockAchievement('shochu_100'); 
+
+  if (achData.shochuCount >= 500)  unlockAchievement('shochu_500'); 
+
+  if (achData.shochuCount >= 1000) unlockAchievement('shochu_1000'); 
+
+ 
+
+  if (achData.sakeCount >= 10)   unlockAchievement('sake_10'); 
+
+  if (achData.sakeCount >= 100)  unlockAchievement('sake_100'); 
+
+  if (achData.sakeCount >= 500)  unlockAchievement('sake_500'); 
+
+  if (achData.sakeCount >= 1000) unlockAchievement('sake_1000'); 
+
+ 
+
+  if (achData.ojCount >= 10)   unlockAchievement('oj_10'); 
+
+  if (achData.ojCount >= 100)  unlockAchievement('oj_100'); 
+
+  if (achData.ojCount >= 500)  unlockAchievement('oj_500'); 
+
+  if (achData.ojCount >= 1000) unlockAchievement('oj_1000'); 
+
+ 
+
+  if (achData.colaCount >= 10)   unlockAchievement('cola_10'); 
+
+  if (achData.colaCount >= 100)  unlockAchievement('cola_100'); 
+
+  if (achData.colaCount >= 500)  unlockAchievement('cola_500'); 
+
+  if (achData.colaCount >= 1000) unlockAchievement('cola_1000'); 
+
+ 
+
+  if (achData.tenjoCount >= 1)  unlockAchievement('tenjo_1'); 
+
+  if (achData.tenjoCount >= 5)  unlockAchievement('tenjo_5'); 
+
+  if (achData.tenjoCount >= 20) unlockAchievement('tenjo_20'); 
+
+ 
+
+  if (achData.mangoCount >= 1)  unlockAchievement('mango_1'); 
+
+  if (achData.mangoCount >= 5)  unlockAchievement('mango_5'); 
+
+  if (achData.mangoCount >= 20) unlockAchievement('mango_20'); 
+
+ 
+
   if (achData.throwCount >= 50)  unlockAchievement('throw_50'); 
 
  
@@ -1318,13 +1588,13 @@ function checkTimeAchievements(sec) {
 
  
 
-// --- ドリンク&イベント定義 --- 
+// --- ドリンク&イベント定義 (weight合計 = 100 基準で調整) --- 
 
 const ITEMS = [ 
 
   { 
 
-    id: 'beer', emoji: '🍺', name: '生ビール', desc: '機嫌 +16 / 酔い +14', weight: 35, dumpable: true, 
+    id: 'beer', emoji: '🍺', name: '生ビール', desc: '機嫌 +16 / 酔い +14', weight: 24, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1348,7 +1618,7 @@ const ITEMS = [
 
   { 
 
-    id: 'water', emoji: '💧', name: 'チェイサー (水)', desc: '機嫌 -6 / 酔い -24 (酔い覚まし)', weight: 22, dumpable: true, 
+    id: 'water', emoji: '💧', name: 'チェイサー (水)', desc: '機嫌 -6 / 酔い -24 (酔い覚まし)', weight: 16, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1372,7 +1642,103 @@ const ITEMS = [
 
   { 
 
-    id: 'strong', emoji: '🥃', name: '謎のロック (度数96%)', desc: '機嫌 +35 / 酔い +48 (超危険!)', weight: 16, dumpable: true, 
+    id: 'shochu', emoji: '🍶', name: '焼酎', desc: '機嫌 +24 / 酔い +28 (やや低確率)', weight: 8, dumpable: true, ultraRare: false, 
+
+    drink: (s) => { 
+
+      s.mood += 24; 
+
+      s.drunk += 28; 
+
+      achData.shochuCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('クッ〜！焼酎が効く〜！'); 
+
+      playTone(330, 'triangle', 0.15); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'sake', emoji: '🎎', name: '熱燗', desc: '機嫌 +28 / 酔い +32 (やや低確率)', weight: 7, dumpable: true, ultraRare: false, 
+
+    drink: (s) => { 
+
+      s.mood += 28; 
+
+      s.drunk += 32; 
+
+      achData.sakeCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('アツッ！熱燗が染み渡る…！'); 
+
+      playTone(390, 'sine', 0.18); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'oj', emoji: '🍊', name: 'チェイサー (オレンジジュース)', desc: '機嫌 +4 / 酔い -16 (やや低確率)', weight: 8, dumpable: true, ultraRare: false, 
+
+    drink: (s) => { 
+
+      s.mood += 4; 
+
+      s.drunk -= 16; 
+
+      achData.ojCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('🍊 甘酸っぱくてスッキリ！'); 
+
+      playTone(720, 'sine', 0.14); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'cola', emoji: '🥤', name: 'コーラ', desc: '機嫌 +8 / 酔い -10 (やや低確率)', weight: 7, dumpable: true, ultraRare: false, 
+
+    drink: (s) => { 
+
+      s.mood += 8; 
+
+      s.drunk -= 10; 
+
+      achData.colaCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('シュワァッ！炭酸で気分転換！'); 
+
+      playTone(600, 'triangle', 0.12); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'strong', emoji: '🥃', name: '謎のロック (度数96%)', desc: '機嫌 +35 / 酔い +48 (超危険!)', weight: 8, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1398,7 +1764,7 @@ const ITEMS = [
 
   { 
 
-    id: 'ukon', emoji: '✨', name: '黄金のウコン', desc: '機嫌 +5 / 酔い -35 (神アイテム!)', weight: 10, dumpable: true, 
+    id: 'ukon', emoji: '✨', name: '黄金のウコン', desc: '機嫌 +5 / 酔い -35 (神アイテム!)', weight: 6, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1422,7 +1788,7 @@ const ITEMS = [
 
   { 
 
-    id: 'cocktail', emoji: '🍸', name: '部長特製カオス酒', desc: '50%で機嫌&酔い全快 / 50%で即死', weight: 9, dumpable: true, 
+    id: 'cocktail', emoji: '🍸', name: '部長特製カオス酒', desc: '50%で機嫌&酔い全快 / 50%で即死', weight: 5, dumpable: true, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1462,7 +1828,7 @@ const ITEMS = [
 
   { 
 
-    id: 'talk', emoji: '🗣️', name: '上司の長い武勇伝', desc: '【特別】捨てられない！相槌を打て！', weight: 8, dumpable: false, 
+    id: 'talk', emoji: '🗣️', name: '上司の長い武勇伝', desc: '【特別】捨てられない！相槌を打て！', weight: 6, dumpable: false, ultraRare: false, 
 
     drink: (s) => { 
 
@@ -1477,6 +1843,54 @@ const ITEMS = [
       showToast('「さすが部長！勉強になります！」'); 
 
       playTone(520, 'sine', 0.12); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'tenjo', emoji: '👑', name: '幻の純米大吟醸「天上」', desc: '【超レア】機嫌 +50 / 酔い -20', weight: 1, dumpable: true, ultraRare: true, 
+
+    drink: (s) => { 
+
+      s.mood += 50; 
+
+      s.drunk -= 20; 
+
+      achData.tenjoCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('👑 天上の銘酒!! 部長も大絶賛!!'); 
+
+      playTone(1046, 'triangle', 0.35, 0.18); 
+
+    } 
+
+  }, 
+
+  { 
+
+    id: 'mango', emoji: '🥭', name: '伝説の100%濃厚マンゴージュース', desc: '【超レア】機嫌 +15 / 酔い -50', weight: 1, dumpable: true, ultraRare: true, 
+
+    drink: (s) => { 
+
+      s.mood += 15; 
+
+      s.drunk -= 50; 
+
+      achData.mangoCount += 1; 
+
+      saveAchData(); 
+
+      checkCountAchievements(); 
+
+      showToast('🥭 伝説の濃厚マンゴー!! 酔いが吹っ飛んだ!!'); 
+
+      playTone(920, 'sine', 0.35, 0.18); 
 
     } 
 
@@ -1536,6 +1950,8 @@ const el = {
 
   bossSpeech: document.getElementById('boss-speech'), 
 
+  itemCard: document.getElementById('item-card'), 
+
   itemEmoji: document.getElementById('item-emoji'), 
 
   itemName: document.getElementById('item-name'), 
@@ -1553,6 +1969,8 @@ const el = {
   toast: document.getElementById('toast'), 
 
   titleScreen: document.getElementById('title-screen'), 
+
+  rulesScreen: document.getElementById('rules-screen'), 
 
   resultScreen: document.getElementById('result-screen'), 
 
@@ -1604,9 +2022,15 @@ function pickNextItem() {
 
   el.itemEmoji.textContent = state.currentItem.emoji; 
 
-  el.itemName.textContent = state.currentItem.name; 
+  el.itemName.innerHTML = state.currentItem.ultraRare 
+
+    ? `${state.currentItem.name}<span class="rare-tag">ULTRA RARE</span>` 
+
+    : state.currentItem.name; 
 
   el.itemDesc.textContent = state.currentItem.desc; 
+
+  el.itemCard.classList.toggle('ultra-rare', Boolean(state.currentItem.ultraRare)); 
 
  
 
@@ -1648,7 +2072,7 @@ function showToast(msg) {
 
   clearTimeout(toastTimer); 
 
-  toastTimer = setTimeout(() => { el.toast.style.opacity = '0'; }, 750); 
+  toastTimer = setTimeout(() => { el.toast.style.opacity = '0'; }, 800); 
 
 } 
 
@@ -1850,8 +2274,6 @@ function gameLoop(now) {
 
  
 
-  // 1秒ごとに累計生存時間を保存して無駄な書き込みを抑制 
-
   if (now - lastTotalSaveTime > 1000) { 
 
     lastTotalSaveTime = now; 
@@ -1907,6 +2329,8 @@ function startGame() {
   lastTotalSaveTime = performance.now(); 
 
   el.titleScreen.classList.add('hidden'); 
+
+  el.rulesScreen.classList.add('hidden'); 
 
   el.resultScreen.classList.add('hidden'); 
 
@@ -1973,6 +2397,22 @@ function triggerEnd(endingKey) {
   document.getElementById('result-time').textContent = state.time.toFixed(1); 
 
   el.resultScreen.classList.remove('hidden'); 
+
+} 
+
+ 
+
+function openRules() { 
+
+  el.rulesScreen.classList.remove('hidden'); 
+
+} 
+
+ 
+
+function closeRules() { 
+
+  el.rulesScreen.classList.add('hidden'); 
 
 } 
 
@@ -2046,7 +2486,7 @@ function openAchievements() {
 
   const summary = document.getElementById('ach-stats-summary'); 
 
-  summary.textContent = `解除: ${achData.unlocked.length}/${ACHIEVEMENTS.length} ｜ 累計生存: ${formatTotalTime(achData.totalSurvivedSeconds)} ｜ 生ビール: ${achData.beerCount}杯 ｜ プレイ: ${achData.playCount}回`; 
+  summary.textContent = `解除: ${achData.unlocked.length}/${ACHIEVEMENTS.length} ｜ 累計生存: ${formatTotalTime(achData.totalSurvivedSeconds)} ｜ プレイ: ${achData.playCount}回`; 
 
   list.innerHTML = ''; 
 
